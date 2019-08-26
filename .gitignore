@@ -1,2 +1,4 @@
 node_modules
-
+resources/public/js/cljs-runtime
+.cpcache
+.shadow-cljs
