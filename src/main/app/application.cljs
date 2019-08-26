@@ -10,3 +10,5 @@
 ;; There are 2 tree in our app
 ;; - UI tree
 ;; - Data tree
+
+;; Queries also form a tree as well
