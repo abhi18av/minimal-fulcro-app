@@ -6,10 +6,12 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Person Component
-
 (defsc Person [this {:person/keys [name age]}]
+       {:initial-state (fn [{:keys [name age] :as params}]
+                         {:person/name name :person/age age})}
        (dom/li
-         (dom/h5 (str name " (age: " age ")"))))
+         (dom/h5 (str name "(age: " age ")"))))
+
 
 ;; The keyfn generates a react key for each element based on props.
 ;; See React documentation on keys.
@@ -21,6 +23,15 @@
 ;; PersonList Component
 
 (defsc PersonList [this {:list/keys [label people]}]
+       {:initial-state (fn [{:keys [label]}]
+                         {:list/label  label
+                          :list/people (if (= label "Friends")
+                                         ;; friend
+                                         [(comp/get-initial-state Person {:name "Sally" :age 32})
+                                          (comp/get-initial-state Person {:name "Joe" :age 22})]
+                                         ;; enemies
+                                         [(comp/get-initial-state Person {:name "Fred" :age 11})
+                                          (comp/get-initial-state Person {:name "Bobby" :age 55})])})}
        (dom/div
          (dom/h4 label)
          (dom/ul
@@ -32,13 +43,10 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main entry point for ReactJS
-(defsc Root [this {:keys [ui/react-key]}]
-       (let [ui-data {:friends {:list/label "Friends"
-                                :list/people [{:person/name "Sally" :person/age 32}
-                                             {:person/name "Joe" :person/age 22}]}
-                      :enemies {:list/label "Enemies"
-                                :list/people [{:person/name "Fred" :person/age 11}
-                                             {:person/name "Bobby" :person/age 55}]}}]
-         (dom/div
-           (ui-person-list (:friends ui-data))
-           (ui-person-list (:enemies ui-data)))))
+
+(defsc Root [this {:keys [friends enemies]}]
+       {:initial-state (fn [params] {:friends (comp/get-initial-state PersonList {:label "Friends"})
+                                     :enemies (comp/get-initial-state PersonList {:label "Enemies"})}) }
+       (dom/div
+         (ui-person-list friends)
+         (ui-person-list enemies)))
