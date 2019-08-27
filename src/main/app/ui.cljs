@@ -36,6 +36,8 @@
          (dom/h4 label)
          (dom/ul
            (map ui-person people))))
+
+
 (def ui-person-list (comp/factory PersonList))
 
 
@@ -52,11 +54,14 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; NOTE: CLJS repl in IntelliJ
+;; (shadow/repl :main)
+
 ;; NOTE: Inspect (initial) Root element state at the repl
-;; dev:cljs.user=> (com.fulcrologic.fulcro.application/current-state app.application/app)
+;; (com.fulcrologic.fulcro.application/current-state app.application/app)
 
 ;; NOTE: Inspect application state at the repl
-;; dev:cljs.user=> (com.fulcrologic.fulcro.application/current-state app.application/app)
+;; (com.fulcrologic.fulcro.application/current-state app.application/app)
 
 ;; NOTE: Inspect the db as a tree
 ;; (com.fulcrologic.fulcro.algorithms.denormalize/db->tree
