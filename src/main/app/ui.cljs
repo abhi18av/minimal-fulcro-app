@@ -12,12 +12,12 @@
 
 (defsc Person
        "Documentation"
-       [this {:person/keys [name age] :as props} {:keys [onDelete]}]
+       [this {:person/keys [id name age] :as props} {:keys [onDelete]}]
        {:query         [:person/id :person/name :person/age]
         :ident         (fn [] [:person/id (:person/id props)])
         :initial-state (fn [{:keys [id name age] :as params}] {:person/id id :person/name name :person/age age})}
        (dom/li
-         (dom/h5 (str name " (age: " age ")") (dom/button {:onClick #(onDelete name)} "X"))))
+         (dom/h5 (str name " (age: " age ")") (dom/button {:onClick #(onDelete id)} "X"))))
 
 ;; The keyfn generates a react key for each element based on props.
 ;; See React documentation on keys.
@@ -41,7 +41,7 @@
                                   (comp/get-initial-state Person {:id 2 :name "Joe" :age 22})]
                                  [(comp/get-initial-state Person {:id 3 :name "Fred" :age 11})
                                   (comp/get-initial-state Person {:id 4 :name "Bobby" :age 55})])})}
-       (let [delete-person (fn [item-id] (comp/transact! this [(api/delete-person {:list id :item item-id})]))]
+       (let [delete-person (fn [person-id] (comp/transact! this [(api/delete-person {:list id :person person-id})]))]
          (dom/div
            (dom/h4 label)
            (dom/ul
