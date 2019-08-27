@@ -10,7 +10,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Person Component
 
-(defsc Person [this {:person/keys [name age] :as props} {:keys [onDelete]}]
+(defsc Person
+       "Documentation"
+       [this {:person/keys [name age] :as props} {:keys [onDelete]}]
        {:query         [:person/id :person/name :person/age]
         :ident         (fn [] [:person/id (:person/id props)])
         :initial-state (fn [{:keys [id name age] :as params}] {:person/id id :person/name name :person/age age})}
@@ -25,8 +27,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PersonList Component
 
-(defsc PersonList [this {:list/keys [id label people] :as props}]
-       {:query [:list/id :list/label {:list/people (comp/get-query Person)}] ; (5)
+(defsc PersonList
+       "Documentation"
+       [this {:list/keys [id label people] :as props}]
+       {:query [:list/id :list/label {:list/people (comp/get-query Person)}]
         :ident (fn [] [:list/id (:list/id props)])
         :initial-state
                (fn [{:keys [id label]}]
@@ -37,7 +41,7 @@
                                   (comp/get-initial-state Person {:id 2 :name "Joe" :age 22})]
                                  [(comp/get-initial-state Person {:id 3 :name "Fred" :age 11})
                                   (comp/get-initial-state Person {:id 4 :name "Bobby" :age 55})])})}
-       (let [delete-person (fn [item-id] (comp/transact! this [(api/delete-person {:list id :item item-id})]))] ; (4)
+       (let [delete-person (fn [item-id] (comp/transact! this [(api/delete-person {:list id :item item-id})]))]
          (dom/div
            (dom/h4 label)
            (dom/ul
@@ -48,24 +52,30 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main entry point for ReactJS
 
-(defsc Root [this {:keys [friends enemies]}]
-       {:initial-state (fn [params] {:friends (comp/get-initial-state PersonList {:label "Friends"})
-                                     :enemies (comp/get-initial-state PersonList {:label "Enemies"})})}
+(defsc Root
+       "Documentation"
+       [this {:keys [friends enemies]}]
+       {:query         [{:friends (comp/get-query PersonList)}
+                        {:enemies (comp/get-query PersonList)}]
+        :initial-state (fn [params] {:friends (comp/get-initial-state PersonList {:id :friends :label "Friends"})
+                                     :enemies (comp/get-initial-state PersonList {:id :enemies :label "Enemies"})})}
        (dom/div
          (ui-person-list friends)
          (ui-person-list enemies)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(comment
 ;; NOTE: CLJS repl in IntelliJ
-;; (shadow/repl :main)
+(shadow/repl :main)
 
-;; NOTE: Inspect (initial) Root element state at the repl
-;; (com.fulcrologic.fulcro.application/current-state app.application/app)
+;; NOTE:
+(ns app.ui)
 
 ;; NOTE: Inspect application state at the repl
-;; (com.fulcrologic.fulcro.application/current-state app.application/app)
+(def state (com.fulcrologic.fulcro.application/current-state app.application/app))
 
-;; NOTE: Inspect the db as a tree
-;; (com.fulcrologic.fulcro.algorithms.denormalize/db->tree
-;;  [{:friends [:list/label]}] (comp/get-initial-state app.ui/Root {}) {})
+(def query (com.fulcrologic.fulcro.components/get-query app.ui/Root))
+(com.fulcrologic.fulcro.algorithms.denormalize/db->tree query state state)
+
+) ;; end of comment
