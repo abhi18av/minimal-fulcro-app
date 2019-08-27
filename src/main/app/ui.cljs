@@ -1,16 +1,19 @@
 (ns app.ui
   (:require
+    ;; internal namespaces
+    [app.mutations :as api]
+    ;; external libraries
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Person Component
-(defsc Person [this {:person/keys [name age]} {:keys [onDelete]}] ; (2)
+(defsc Person [this {:person/keys [name age]} {:keys [onDelete]}]
        {:query         [:person/name :person/age]
         :initial-state (fn [{:keys [name age] :as params}] {:person/name name :person/age age})}
        (dom/li
-         (dom/h5 (str name " (age: " age ")") (dom/button {:onClick #(onDelete name)} "X")))) ; (2)
+         (dom/h5 (str name " (age: " age ")") (dom/button {:onClick #(onDelete name)} "X"))))
 
 
 ;; The keyfn generates a react key for each element based on props.
@@ -22,7 +25,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; PersonList Component
 
-(defsc PersonList [this {:list/keys [label people]}] ;
+(defsc PersonList [this {:list/keys [label people]}]
        {:query [:list/label {:list/people (comp/get-query Person)}]
         :initial-state
                (fn [{:keys [label]}]
@@ -32,11 +35,11 @@
                                   (comp/get-initial-state Person {:name "Joe" :age 22})]
                                  [(comp/get-initial-state Person {:name "Fred" :age 11})
                                   (comp/get-initial-state Person {:name "Bobby" :age 55})])})}
-       (let [delete-person (fn [name] (println label "asked to delete" name))] ; (1)
+       (let [delete-person (fn [name] (comp/transact! this [(api/delete-person {:list-name label :name name})]))]
          (dom/div
            (dom/h4 label)
            (dom/ul
-             (map (fn [p] (ui-person (comp/computed p {:onDelete delete-person}))) people))))) ; (1)
+             (map (fn [p] (ui-person (comp/computed p {:onDelete delete-person}))) people)))))
 
 (def ui-person-list (comp/factory PersonList))
 
@@ -66,4 +69,3 @@
 ;; NOTE: Inspect the db as a tree
 ;; (com.fulcrologic.fulcro.algorithms.denormalize/db->tree
 ;;  [{:friends [:list/label]}] (comp/get-initial-state app.ui/Root {}) {})
-
