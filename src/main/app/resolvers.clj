@@ -23,6 +23,14 @@
                  ::pc/output [:person/name :person/age]}
                 (get people-table id))
 
+(pc/defresolver friends-resolver [env input]
+                {::pc/output [{:friends [:list/id]}]}
+                {:friends {:list/id :friends}})
+
+(pc/defresolver enemies-resolver [env input]
+                {::pc/output [{:enemies [:list/id]}]}
+                {:enemies {:list/id :enemies}})
+
 ;; Given a :list/id, this can generate a list label and the people
 ;; in that list (but just with their IDs)
 (pc/defresolver list-resolver [env {:list/keys [id]}]
@@ -32,4 +40,5 @@
                   (assoc list
                     :list/people (mapv (fn [id] {:person/id id}) (:list/people list)))))
 
-(def resolvers [person-resolver list-resolver])
+(def resolvers [person-resolver list-resolver friends-resolver enemies-resolver])
+
