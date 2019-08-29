@@ -1,13 +1,20 @@
 (ns app.client
   (:require
-    [app.application :refer [app]]
+    ;; internal namespaces
     [app.ui :as ui]
-    [com.fulcrologic.fulcro.application :as app]))
+    [app.application :refer [app]]
+
+    ;; external namespaces
+    [com.fulcrologic.fulcro.application :as app]
+    [com.fulcrologic.fulcro.data-fetch :as df]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main entry point for JS
 (defn ^:export init []
   (app/mount! app ui/Root "app")
+  ;; initiate the load action at the app init
+  (df/load! app :friends ui/PersonList)
+  (df/load! app :enemies ui/PersonList)
   (js/console.log "Loaded"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
