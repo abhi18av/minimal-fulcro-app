@@ -1,13 +1,16 @@
 (ns app.parser
   (:require
+    ;; internal namespaces
     [app.resolvers]
+    [app.mutations]
+    ;; external namespaces
     [com.wsscode.pathom.core :as p]
     [com.wsscode.pathom.connect :as pc]
     [taoensso.timbre :as log]))
 
 ;; NOTE connect the clojure-cli repl via spacemacs and this works fine then. This is the http-kit / backend server repl
 
-(def resolvers [app.resolvers/resolvers])
+(def resolvers [app.resolvers/resolvers app.mutations/mutations])
 
 (def pathom-parser
   (p/parser {::p/env     {::p/reader                 [p/map-reader

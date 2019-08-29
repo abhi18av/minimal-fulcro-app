@@ -14,9 +14,9 @@
 (defn ^:export init []
   (app/mount! app ui/Root "app")
   ;; initiate the load action at the app init
-  #_(df/load! app :friends ui/PersonList)
+  (df/load! app :friends ui/PersonList)
   #_(df/load! app [:person/id 3]  ui/PersonList)              ;; throws not-found
-  (df/load! app [:person/id 3] ui/Person {:target (targeting/append-to [:list/id :friends :list/people])})
+  #_(df/load! app [:person/id 3] ui/Person {:target (targeting/append-to [:list/id :friends :list/people])})
   (df/load! app :enemies ui/PersonList)
   (js/console.log "Loaded"))
 

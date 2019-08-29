@@ -8,4 +8,6 @@
              [{list-id   :list/id
                person-id :person/id}]
              (action [{:keys [state]}]
-                     (swap! state merge/remove-ident* [:person/id person-id] [:list/id list-id :list/people])))
+                     (swap! state merge/remove-ident* [:person/id person-id] [:list/id list-id :list/people]))
+             (remote [env] true))
+

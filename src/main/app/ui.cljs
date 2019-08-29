@@ -9,7 +9,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Person Component
-;; TODO figure out where is the mutation broken - it is sensed by the fulcro inspector but doesn't reflect in the UI
 (defsc Person [this {:person/keys [id name age] :as props} {:keys [onDelete]}]
   {:query [:person/id :person/name :person/age]
    :ident (fn [] [:person/id (:person/id props)])}
