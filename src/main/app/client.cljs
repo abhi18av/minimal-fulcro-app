@@ -6,6 +6,7 @@
 
     ;; external namespaces
     [com.fulcrologic.fulcro.application :as app]
+    [com.fulcrologic.fulcro.algorithms.data-targeting :as targeting]
     [com.fulcrologic.fulcro.data-fetch :as df]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -13,7 +14,9 @@
 (defn ^:export init []
   (app/mount! app ui/Root "app")
   ;; initiate the load action at the app init
-  (df/load! app :friends ui/PersonList)
+  #_(df/load! app :friends ui/PersonList)
+  #_(df/load! app [:person/id 3]  ui/PersonList)              ;; throws not-found
+  (df/load! app [:person/id 3] ui/Person {:target (targeting/append-to [:list/id :friends :list/people])})
   (df/load! app :enemies ui/PersonList)
   (js/console.log "Loaded"))
 
